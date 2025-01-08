@@ -82,19 +82,24 @@ def get_bluetooth_battery(
             icon = icon_name_symbol.get(icon)
 
         if is_connected and battery is not None:
-            batery_text = f"{battery:.0f}%"
+            battery_text = f"{battery:.0f}%"
             if icon:
-                batery_text = f"{icon} {batery_text}"
+                battery_text = f"{icon} {battery_text}"
             else:
-                batery_text = f"{device_name} {batery_text}"
+                battery_text = f"{device_name} {battery_text}"
 
-            if not ignore_colors:
-                if battery_red <= battery <= battery_yellow:
-                    batery_text = bcolors.WARNING.colored(batery_text)
-                elif battery < battery_red:
-                    batery_text = bcolors.FAIL.colored(batery_text)
+            if battery_red <= battery <= battery_yellow:
+                if ignore_colors:
+                    battery_text = f"{battery_text} 󰥄"
+                else:
+                    battery_text = bcolors.WARNING.colored(battery_text)
+            elif battery < battery_red:
+                if ignore_colors:
+                    battery_text = f"{battery_text} 󰤾"
+                else:
+                    battery_text = bcolors.FAIL.colored(battery_text)
 
-            line.append(batery_text)
+            line.append(battery_text)
 
     return line
 
@@ -179,6 +184,4 @@ if __name__ == "__main__":
                 },
             )
             # and echo back new encoded json
-            print(prefix + json.dumps(j))
-            # print_line(prefix + json.dumps(j))
-            sys.stdout.flush()
+            print_line(prefix + json.dumps(j))
